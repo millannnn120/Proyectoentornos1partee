@@ -1,0 +1,6 @@
+modelo\Producto.class
+modelo\ProductoDigital.class
+principal\Main.class
+modelo\ProductoFisico.class
+modelo\Cliente.class
+modelo\Pedido.class
