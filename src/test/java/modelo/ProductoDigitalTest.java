@@ -5,11 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ProductoDigitalTest {
 
+    // ── Pruebas existentes ────────────────────────────────────────────────
+
     @Test
-    @DisplayName("TC-01: calcularPrecioFinal aplica IVA 21% y descuento 15%")
-    void testCalcularPrecioFinalConIVAYDescuento() {
+    @DisplayName("TC-01: calcularPrecioFinal aplica IVA GENERAL (21%) por defecto")
+    void testCalcularPrecioFinalIvaGeneral() {
         ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
-        assertEquals(102.85, producto.calcularPrecioFinal(), 0.01);
+        // IVA GENERAL por defecto: 100 * 1.21 = 121.0
+        assertEquals(121.0, producto.calcularPrecioFinal(), 0.01);
     }
 
     @Test
@@ -36,5 +39,54 @@ class ProductoDigitalTest {
     void testToString() {
         ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
         assertNotNull(producto.toString());
+    }
+
+    // ── Pruebas nuevas: aplicarIVA con los tres tipos ─────────────────────
+
+    @Test
+    @DisplayName("aplicarIVA GENERAL aplica 21%")
+    void testAplicarIvaGeneral() {
+        ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
+        assertEquals(121.0, producto.aplicarIVA("GENERAL"), 0.01);
+    }
+
+    @Test
+    @DisplayName("aplicarIVA REDUCIDO aplica 10%")
+    void testAplicarIvaReducido() {
+        ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
+        assertEquals(110.0, producto.aplicarIVA("REDUCIDO"), 0.01);
+    }
+
+    @Test
+    @DisplayName("aplicarIVA SUPER aplica 4%")
+    void testAplicarIvaSuper() {
+        ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
+        assertEquals(104.0, producto.aplicarIVA("SUPER"), 0.01);
+    }
+
+    @Test
+    @DisplayName("aplicarIVA con tipo inválido lanza IllegalArgumentException")
+    void testAplicarIvaInvalidoLanzaExcepcion() {
+        ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
+        assertThrows(IllegalArgumentException.class, () -> {
+            producto.aplicarIVA("INVALIDO");
+        });
+    }
+
+    @Test
+    @DisplayName("setTipoIva con valor inválido lanza IllegalArgumentException")
+    void testSetTipoIvaInvalidoLanzaExcepcion() {
+        ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
+        assertThrows(IllegalArgumentException.class, () -> {
+            producto.setTipoIva("EUROPEO");
+        });
+    }
+
+    @Test
+    @DisplayName("calcularPrecioFinal cambia al cambiar el tipo de IVA")
+    void testCambiarTipoIvaAfectaPrecioFinal() {
+        ProductoDigital producto = new ProductoDigital("Ebook", 100.0, "5MB");
+        producto.setTipoIva("SUPER");
+        assertEquals(104.0, producto.calcularPrecioFinal(), 0.01);
     }
 }
